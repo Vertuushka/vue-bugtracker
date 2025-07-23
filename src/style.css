@@ -9,6 +9,8 @@
   --background-light: #FFFFFF;
   --separator: #E4E4E4;
 
+  --color-important: hsl(16, 65%, 55%);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -20,6 +22,10 @@
   margin: 0;
   box-sizing: border-box;
   font-size: 14px;
+}
+
+body {
+  height: 100%;
 }
 
 button {
@@ -37,15 +43,50 @@ button {
 }
 
 .btn-primary {
-    background-color: var(--accent);
-    color: var(--background-light);
-    font-weight: bold;
-    padding: 12px 18px;
+  background-color: var(--accent);
+  color: var(--background-light);
+  font-weight: bold;
+  padding: 12px 18px;
+}
+
+.card {
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--separator);
+  flex-direction: column;
+  gap: 8px;
 }
 
 .btn-secondary { border: 1px solid var(--separator); }
 .btn-primary:hover { background-color: var(--accent-hover);}
 .btn-secondary:hover { background-color: var(--separator); }
 
+.inlne-flex { display: inline-flex; }
 .flex { display: flex; }
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+.flex-center {
+  display: flex;
+  justify-content: cetner;
+  align-items: center;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.width-100 { width: 100%; }
+
 .description { color: var(--description); }
+.gap-8 { gap: 8px; }
+.gap-16 { gap: 16px; }
+.gap-24 { gap: 24px; }
+.gap-32 { gap: 32px; }
+
+.icon { 
+  font-variation-settings: 
+  'wght' 350;
+}
