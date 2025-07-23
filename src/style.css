@@ -1,0 +1,51 @@
+:root {
+  font-family: Roboto, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  line-height: 1.0;
+
+  --accent: hsl(222, 76%, 54%);
+  --accent-hover: hsl(222, 76%, 60%);
+  --description: #74747C;
+  --background-light: #FFFFFF;
+  --separator: #E4E4E4;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: var(--background-light);
+    font-weight: bold;
+    padding: 12px 18px;
+}
+
+.btn-secondary { border: 1px solid var(--separator); }
+.btn-primary:hover { background-color: var(--accent-hover);}
+.btn-secondary:hover { background-color: var(--separator); }
+
+.flex { display: flex; }
+.description { color: var(--description); }
