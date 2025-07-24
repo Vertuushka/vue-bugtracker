@@ -1,7 +1,7 @@
 <template>
-    <div class="drop-down width-100">
+    <div class="drop-down width-100" ref="dropdownRef">
         <div class="drop-down-control flex" @click="toggleMenu">
-            <p class="dropdown-label">{{ selected }}</p>
+            <p class="dropdown-label">{{ selected || "Select"}}</p>
             <img src="../assets/arrow_down.svg" alt="">
         </div>
         <div v-if="isOpen" class="drop-down-menu flex">
@@ -87,7 +87,19 @@
                 this.selected = option;
                 this.isOpen = false;
                 this.$emit('select', option);
-            }
-        }
+            },
+            handleClickOutside(event) {
+                const dropdown = this.$refs.dropdownRef;
+                if (dropdown && !dropdown.contains(event.target)) {
+                    this.isOpen = false;
+                }
+            },
+        },
+        mounted() {
+            document.addEventListener("click", this.handleClickOutside);
+        },
+        beforeUnmount() {
+            document.removeEventListener("click", this.handleClickOutside);
+        },
     }
 </script>

@@ -14,8 +14,12 @@
                 <button class="btn-secondary">
                     <img src="../assets/dark_mode.svg" alt="">
                 </button>
-                <button v-if="currentUser" class="btn-primary">
-                    <img src="../assets/add.svg" alt="" class="text-image">
+                <button 
+                    v-if="currentUser" 
+                    class="btn-primary"
+                    @click="$emit('open-modal')"
+                >
+                    <span class="material-symbols-rounded icon">add</span>
                     Add bug/task
                 </button>
             </div>
@@ -85,6 +89,6 @@
             onAuthStateChanged(auth, (user) => {
                 this.currentUser = user;
             });
-        }
+        },
     }
 </script>

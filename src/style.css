@@ -9,6 +9,7 @@
     --background-light: #FFFFFF;
     --separator: #E4E4E4;
     --color-important: hsl(16, 65%, 55%);
+    --color-important-hover: hsl(0, 65%, 61%);
     --color-medium: hsl(43, 72%, 56%);
     --color-low: hsl(126, 36%, 46%);
     --text: hsl(240, 10%, 4%);
@@ -95,8 +96,23 @@ input {
 }
 
 .btn-secondary { border: 1px solid var(--separator); }
-.btn-primary:hover, .btn-primary-mini:hover { background-color: var(--accent-hover);}
+.btn-primary:hover, .btn-primary-mini:hover, .btn-primary-small:hover { background-color: var(--accent-hover);}
 .btn-secondary:hover { background-color: var(--separator); }
+.btn-primary-small {     
+    background-color: var(--accent);
+    color: var(--background-light); 
+    font-weight: bold;
+    padding: 8px 16px;
+}
+
+.btn-red {
+    background-color: var(--color-important);
+    color: var(--background-light);
+    font-weight: bold;
+    padding: 8px 16px;
+}
+
+.btn-red:hover { background-color: var(--color-important-hover); }
 
 .inlne-flex { display: inline-flex; }
 .flex { display: flex; }

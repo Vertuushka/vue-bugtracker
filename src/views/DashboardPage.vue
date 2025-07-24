@@ -1,6 +1,8 @@
 <template>
 	<div id="app">
-		<Navbar />
+		<Navbar 
+            @open-modal="showModal = true"
+        />
 		<main>
             <div class="search-panel width-100 flex gap-24">
                 <SearchBar />
@@ -23,6 +25,11 @@
                     :data="record"
                  />
             </div>
+            <TrackerModal
+                v-if="showModal"
+                @close="showModal = false"
+                :users="usersMap"
+            />
 		</main>
 	</div>
 </template>
@@ -54,10 +61,11 @@ import DropDown from "../components/DropDown.vue";
 import SearchBar from "../components/SearchBar.vue";
 import DashboardCard from "../components/DashboardCard.vue";
 import TrackerCard from "../components/TrackerCard.vue";
+import TrackerModal from "../components/TrackerModal.vue";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-
+import { statuses, priorities } from "../constants";
 
 export default {
 	name: "Dashboard",
@@ -66,17 +74,19 @@ export default {
 		DropDown,
 		SearchBar,
 		DashboardCard,
-		TrackerCard
+		TrackerCard,
+        TrackerModal
 	},
     data() {
         return {
-            priorities: ["Low", "Medium", "High", "Critical"],
-            statuses: ["Open", "In progress", "Resolved"],
+            priorities: priorities,
+            statuses: statuses,
             stats: [],
             records: [],
             usersMap: {},
             selectedPriority: null,
             selectedStatus: null,
+            showModal: false,
         }
     },
     async mounted() {
