@@ -1,6 +1,6 @@
 <template>
     <div class="priority-label">
-        <p class="priority-text">Medium</p>
+        <p class="priority-text" :class="`label-${data}`">{{ data }}</p>
     </div>
 </template>
 
@@ -23,6 +23,12 @@
 
 <script>
     export default {
-        name: "PriorityLabel"
+        name: "PriorityLabel",
+        props: {
+            data: {
+                type: String,
+                required: true
+            }
+        }
     }
 </script>

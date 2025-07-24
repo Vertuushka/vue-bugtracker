@@ -1,6 +1,6 @@
 <template>
     <div class="status-label">
-        <p class="status-text description">Open</p>
+        <p class="status-text description">{{ data }}</p>
     </div>
 </template>
 
@@ -10,7 +10,7 @@
         justify-content: center;
         align-items: center;
         padding: 4px 12px;
-        border-radius: 16px;
+        border-radius: 4px;
         background-color: var(--separator);
     }
 
@@ -18,6 +18,12 @@
 
 <script>
     export default {
-        name: "StatusLabel"
+        name: "StatusLabel",
+        props: {
+            data: {
+                type: String,
+                required: true
+            }
+        }
     }
 </script>

@@ -8,14 +8,28 @@
     --description: #74747C;
     --background-light: #FFFFFF;
     --separator: #E4E4E4;
-
     --color-important: hsl(16, 65%, 55%);
+    --color-medium: hsl(43, 72%, 56%);
+    --color-low: hsl(126, 36%, 46%);
+    --text: hsl(240, 10%, 4%);
+
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+.color-text { color: var(--text); }
+.color-accent { color: var(--accent); }
+.color-low { color: var(--color-low); }
+.color-medium { color: var(--color-medium); }
+.color-critical { color: var(--color-important); }
+
+.label-Low { background-color: var(--color-low); }
+.label-Medium { background-color: var(--color-medium); }
+.label-High { background-color: var(--color-important); }
+.label-Critical { background-color: var(--color-important); }
 
 * {
     padding: 0;

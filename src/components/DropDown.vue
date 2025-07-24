@@ -1,19 +1,25 @@
 <template>
     <div class="drop-down width-100">
-        <div class="drop-down-control flex">
-            <p class="dropdown-label">Dropdown label</p>
+        <div class="drop-down-control flex" @click="toggleMenu">
+            <p class="dropdown-label">{{ selected }}</p>
             <img src="../assets/arrow_down.svg" alt="">
         </div>
-        <div class="drop-down-menu flex">
-            <p class="drop-down-item">1</p>
-            <p class="drop-down-item">1</p>
-            <p class="drop-down-item">1</p>
-            <p class="drop-down-item">1</p>
+        <div v-if="isOpen" class="drop-down-menu flex">
+            <p v-for="option in options"
+                :key="option" 
+                class="drop-down-item"
+                :class="{ selected: option === selected }"
+                @click="selectOption(option)"
+            >{{ option }}</p>
         </div>
     </div>
 </template>
 
 <style>
+    .selected {
+        background-color: var(--separator);
+    }
+
     .drop-down {
         display: flex;
         position: relative;
@@ -39,7 +45,8 @@
         top: 100%;
         border-radius: 8px;
         border: 1px solid var(--separator);
-        display: none;
+        background-color: #ffffff;
+        /* display: none; */
     }
 
     .drop-down-item {
@@ -59,6 +66,28 @@
 
 <script>
     export default {
-        name: "DopDown"
+        name: "DopDown",
+        props: {
+            options: {
+                type: Array,
+                required: true
+            },
+        },
+        data() {
+            return {
+                isOpen: false,
+                selected: null
+            };
+        },
+        methods: {
+            toggleMenu() {
+                this.isOpen = !this.isOpen;
+            },
+            selectOption(option) {
+                this.selected = option;
+                this.isOpen = false;
+                this.$emit('select', option);
+            }
+        }
     }
 </script>

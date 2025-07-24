@@ -5,17 +5,23 @@
             <div class="search-panel width-100 flex gap-24">
                 <SearchBar />
                 <div class="filters width-100 flex gap-24">
-                    <DropDown :options="priorities" />
+                    <DropDown :options="priorities" @select="selectedPriority = $event"/>
                     <DropDown :options="statuses"/>
                 </div>
             </div>
             <div class="dashboard flex gap-16">
-                <DashboardCard />
+                <DashboardCard 
+                    v-for="stat in stats" 
+                    :type="stat.type"
+                    :label="stat.label"
+                    :value="stat.value"
+                />
             </div>
             <div class="task-cards flex-column gap-16">
-                <TrackerCard />
-                <TrackerCard />
-                <TrackerCard />
+                <TrackerCard
+                    v-for="record in records"
+                    :data="record"
+                 />
             </div>
 		</main>
 	</div>
@@ -48,6 +54,9 @@ import DropDown from "../components/DropDown.vue";
 import SearchBar from "../components/SearchBar.vue";
 import DashboardCard from "../components/DashboardCard.vue";
 import TrackerCard from "../components/TrackerCard.vue";
+import { collection, getDocs } from "firebase/firestore";
+import { auth, db } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 
 export default {
@@ -62,8 +71,75 @@ export default {
     data() {
         return {
             priorities: ["Low", "Medium", "High", "Critical"],
-            statuses: ["Open", "In progress", "Resolved"]
+            statuses: ["Open", "In progress", "Resolved"],
+            stats: [],
+            records: [],
+            usersMap: {},
+            selectedPriority: null,
+            selectedStatus: null,
         }
+    },
+    async mounted() {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await this.fetchUsers();
+                const snapshot = await getDocs(collection(db, "tracker"));
+
+                const allTasks = [];
+                let total = 0;
+                let assigned = 0;
+                let open = 0;
+                let inProgress = 0;
+                let resolved = 0;
+
+                snapshot.forEach(doc => {
+                    const task = doc.data();
+                    task.author = this.usersMap[task.author] || "Undefined";
+                    task.assigned = this.usersMap[task.assigned] || "Undefined";
+                    task.created_at = this.formatTimestamp(task.created_at);
+                    allTasks.push(task);
+                    total++;
+                    if (task.assigned === user.uid) assigned++;
+                    if (task.status === "Open") open++;
+                    if (task.status === "In progress") inProgress++;
+                    if (task.status === "Resolved") resolved++;
+                });
+
+                this.records = allTasks;
+
+                this.stats = [
+                    { type: "text",      label: "Total items",     value: total },
+                    { type: "accent",    label: "Assigned",        value: assigned },
+                    { type: "critical",  label: "Open",            value: open },
+                    { type: "medium",    label: "In progress",     value: inProgress },
+                    { type: "low",       label: "Resolved",        value: resolved }
+                ];
+            } else {
+                this.$router.push('/login');
+            }
+        });
+    },
+    methods: {
+        async fetchUsers() {
+            const snapshot = await getDocs(collection(db, "user"));
+            snapshot.forEach(doc => {
+                this.usersMap[doc.id] = doc.data().username;
+            });
+        },
+        formatTimestamp(ts) {
+            if (!ts?.toDate) return '';
+            const date = ts.toDate();
+            
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            
+            const hh = String(date.getHours()).padStart(2, '0');
+            const min = String(date.getMinutes()).padStart(2, '0');
+            
+            return `${yyyy}/${mm}/${dd} ${hh}:${min}`;
+        }
+
     }
 };
 </script>

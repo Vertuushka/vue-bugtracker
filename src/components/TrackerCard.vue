@@ -1,31 +1,35 @@
 <template>
     <div class="tracker-card card flex gap-16">
-        <div class="tracker-card-header flex-between">
+        <div class="tracker-card-header flex-between gap-32">
             <div class="tracker-card-text flex-column gap-8">
-                <p class="tracker-card-header-text">Login button not responsive on mobile</p>
-                <p class="tracker-card-description-text description">The login button on the authentication page becomes unclickable on mobile devices smaller than 375px width. Users report they cannot tap the button consistently.</p>
+                <p class="tracker-card-header-text">{{ data.title }}</p>
+                <p class="tracker-card-description-text description">{{ data.description }}</p>
             </div>
             <div class="tracker-card-priority">
-                <PriorityLabel />
+                <PriorityLabel 
+                    :data="data.priority"
+                />
             </div>
         </div>
         <div class="tracker-card-footer flex-between">
             <div class="tracker-card-labels flex gap-32">
                 <div class="tracker-card-time flex-center gap-8">
                     <span class="material-symbols-rounded description icon">schedule</span>
-                    <p class="description">3 days ago</p>
+                    <p class="description">{{ data.created_at }}</p>
                 </div>
                 <div class="tracker-card-author flex-center gap-8">
                     <span class="material-symbols-rounded description icon">campaign</span>
-                    <p class="description">Vertushka</p>
+                    <p class="description">{{ data.author }}</p>
                 </div>
                 <div class="tracker-card-assigned flex-center gap-8">
                     <span class="material-symbols-rounded description icon">assignment_ind</span>
-                    <p class="description">Eerikazz</p>
+                    <p class="description">{{ data.assigned }}</p>
                 </div>
             </div>
             <div class="tracker-card-status">
-                <StatusLabel />
+                <StatusLabel 
+                    :data="data.status"
+                />
             </div>
         </div>
     </div>
@@ -52,6 +56,12 @@
         components: {
             PriorityLabel,
             StatusLabel
+        },
+        props: {
+            data: {
+                type: Object,
+                required: true
+            }
         }
     }
 </script>
