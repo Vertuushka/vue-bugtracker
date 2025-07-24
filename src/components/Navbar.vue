@@ -59,11 +59,6 @@
         justify-content: space-between;
     }
 
-    .logo-text {
-        font-weight: bold;
-        font-size: 24px;
-    }
-
     .controls {
         gap: 12px;
     }
