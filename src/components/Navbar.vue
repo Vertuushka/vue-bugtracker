@@ -14,7 +14,7 @@
                 <button class="btn-secondary">
                     <img src="../assets/dark_mode.svg" alt="">
                 </button>
-                <button class="btn-primary">
+                <button v-if="currentUser" class="btn-primary">
                     <img src="../assets/add.svg" alt="" class="text-image">
                     Add bug/task
                 </button>
@@ -71,7 +71,20 @@
 </style>
 
 <script>
+    import { onAuthStateChanged } from 'firebase/auth';
+    import { auth } from '../firebase';
+
     export default {
-        name: "Navbar"
+        name: "Navbar",
+        data() {
+            return {
+                currentUser: null
+            }
+        },
+        created() {
+            onAuthStateChanged(auth, (user) => {
+                this.currentUser = user;
+            });
+        }
     }
 </script>

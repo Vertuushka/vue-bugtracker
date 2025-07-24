@@ -5,8 +5,8 @@
             <div class="search-panel width-100 flex gap-24">
                 <SearchBar />
                 <div class="filters width-100 flex gap-24">
-                    <DropDown />
-                    <DropDown />
+                    <DropDown :options="priorities" />
+                    <DropDown :options="statuses"/>
                 </div>
             </div>
             <div class="dashboard flex gap-16">
@@ -59,5 +59,11 @@ export default {
 		DashboardCard,
 		TrackerCard
 	},
+    data() {
+        return {
+            priorities: ["Low", "Medium", "High", "Critical"],
+            statuses: ["Open", "In progress", "Resolved"]
+        }
+    }
 };
 </script>
