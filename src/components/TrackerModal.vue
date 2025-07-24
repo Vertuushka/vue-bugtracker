@@ -8,29 +8,45 @@
             <form action="" class="flex-column gap-24">
                 <label for="title" class="flex-column gap-8 width-100">
                     Title
-                    <input type="text" name="title" id="title" required placeholder="Enter a descriptive title...">
+                    <input 
+                        type="text" 
+                        name="title" 
+                        id="title" 
+                        required 
+                        placeholder="Enter a descriptive title..." 
+                        :value="title"
+                        :readonly="readonly"
+                    >
                 </label>
                 <label for="description" class="flex-column gap-8 width-100">
                     Description
-                    <textarea name="description" id="description" placeholder="Describe the bug or task in detail..."></textarea>
+                    <textarea 
+                        name="description" 
+                        id="description" 
+                        placeholder="Describe the bug or task in detail..."
+                        :readonly="readonly"
+                    >{{ description }}</textarea>
                 </label>
                 <div class="flex width-100 gap-16">
                     <label for="Status" class="flex-column gap-8 width-100">
                         Status
                         <DropDown
                             :options="statuses"
+                            :value="status"
                         />
                     </label>
                     <label for="Priority" class="flex-column gap-8 width-100">
                         Priority
                         <DropDown 
                             :options="priorities"
+                            :value="priority"
                         />
                     </label>
                     <label for="assign" class="flex-column gap-8 width-100">
                         Assign to
                         <DropDown 
                             :options="userOptions.map(u => u.name)"
+                            :value="assigned"
                         />
                     </label>
                 </div>
@@ -92,6 +108,7 @@
 <script>
 import { priorities, statuses } from "../constants";
 import DropDown from "./DropDown.vue"
+
     export default {
         name: "TrackerModal",
         components: {
@@ -101,6 +118,15 @@ import DropDown from "./DropDown.vue"
             users: {
                 type: Object,
                 required: false
+            },
+            selectedTask: {
+                type: Object,
+                default: null,
+                required: false
+            },
+            userUID: {
+                type: String,
+                required: true
             }
         },
         computed: {
@@ -114,8 +140,26 @@ import DropDown from "./DropDown.vue"
         data() {
             return {
                 statuses: statuses,
-                priorities: priorities
+                priorities: priorities,
+
+                title: this.selectedTask?.title || '',
+                description: this.selectedTask?.description || '',
+                assigned: this.selectedTask?.assigned || null,
+                priority: this.selectedTask?.priority || null,
+                status: this.selectedTask?.status || null,
+                author: this.getUidByUsername(this.selectedTask?.author, this.users) || null,
+                user: this.userUID,
+                readonly: this.author !== this.user
             }
+        },
+        methods: {
+            getUidByUsername(username, usersMap) {
+                const entry = Object.entries(usersMap).find(
+                    ([uid, name]) => name === username
+                );
+                return entry ? entry[0] : null;
+            }
+
         }
     }
 </script>

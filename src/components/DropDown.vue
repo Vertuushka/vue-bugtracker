@@ -46,7 +46,6 @@
         border-radius: 8px;
         border: 1px solid var(--separator);
         background-color: #ffffff;
-        /* display: none; */
     }
 
     .drop-down-item {
@@ -58,10 +57,6 @@
         background-color: var(--separator);
     }
 
-    /* .dropdown-label {
-        white-space: nowrap;
-    } */
-
 </style>
 
 <script>
@@ -72,21 +67,28 @@
                 type: Array,
                 required: true
             },
+            value: {
+                type: String,
+                required: false,
+                default: null
+            }
         },
         data() {
             return {
                 isOpen: false,
-                selected: null
+                selected: null,
             };
+        },
+        created() {
+            this.selected = this.value;
         },
         methods: {
             toggleMenu() {
                 this.isOpen = !this.isOpen;
             },
             selectOption(option) {
-                this.selected = option;
+                this.value = option;
                 this.isOpen = false;
-                this.$emit('select', option);
             },
             handleClickOutside(event) {
                 const dropdown = this.$refs.dropdownRef;

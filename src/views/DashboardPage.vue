@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
 		<Navbar 
-            @open-modal="showModal = true"
+            @open-modal="openModal()"
         />
 		<main>
             <div class="search-panel width-100 flex gap-24">
@@ -23,13 +23,16 @@
                 <TrackerCard
                     v-for="record in records"
                     :data="record"
+                    @click="openModal(record)"
                  />
             </div>
             <TrackerModal
                 v-if="showModal"
-                @close="showModal = false"
+                :selectedTask="selectedTask"
                 :users="usersMap"
-            />
+                :userUID="userUID"
+                @close="closeModal()"
+                />
 		</main>
 	</div>
 </template>
@@ -86,12 +89,15 @@ export default {
             usersMap: {},
             selectedPriority: null,
             selectedStatus: null,
+            selectedTask: null,
             showModal: false,
+            userUID: null,
         }
     },
     async mounted() {
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                this.userUID = user.uid;
                 await this.fetchUsers();
                 const snapshot = await getDocs(collection(db, "tracker"));
 
@@ -148,6 +154,16 @@ export default {
             const min = String(date.getMinutes()).padStart(2, '0');
             
             return `${yyyy}/${mm}/${dd} ${hh}:${min}`;
+        },
+
+
+        openModal(task = null) {
+            this.selectedTask = task;
+            this.showModal = true;
+        },
+        closeModal() {
+            this.showModal = false;
+            this.selectedTask = null;
         }
 
     }
