@@ -1,6 +1,6 @@
 <template>
-    <div class="priority-label">
-        <p class="priority-text" :class="`label-${data}`">{{ data }}</p>
+    <div class="priority-label" :class="`label-${data}`">
+        <p class="priority-text">{{ data }}</p>
     </div>
 </template>
 
@@ -11,7 +11,6 @@
         align-items: center;
         padding: 4px 12px;
         border-radius: 16px;
-        background-color: var(--color-important);
     }
 
     .priority-text {

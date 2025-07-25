@@ -31,7 +31,9 @@
                 :selectedTask="selectedTask"
                 :users="usersMap"
                 :userUID="userUID"
+                :username="username"
                 @close="closeModal()"
+                @refresh="fetchTasks"
                 />
 		</main>
 	</div>
@@ -99,37 +101,8 @@ export default {
             if (user) {
                 this.userUID = user.uid;
                 await this.fetchUsers();
-                const snapshot = await getDocs(collection(db, "tracker"));
-
-                const allTasks = [];
-                let total = 0;
-                let assigned = 0;
-                let open = 0;
-                let inProgress = 0;
-                let resolved = 0;
-
-                snapshot.forEach(doc => {
-                    const task = doc.data();
-                    task.author = this.usersMap[task.author] || "Undefined";
-                    task.assigned = this.usersMap[task.assigned] || "Undefined";
-                    task.created_at = this.formatTimestamp(task.created_at);
-                    allTasks.push(task);
-                    total++;
-                    if (task.assigned === user.uid) assigned++;
-                    if (task.status === "Open") open++;
-                    if (task.status === "In progress") inProgress++;
-                    if (task.status === "Resolved") resolved++;
-                });
-
-                this.records = allTasks;
-
-                this.stats = [
-                    { type: "text",      label: "Total items",     value: total },
-                    { type: "accent",    label: "Assigned",        value: assigned },
-                    { type: "critical",  label: "Open",            value: open },
-                    { type: "medium",    label: "In progress",     value: inProgress },
-                    { type: "low",       label: "Resolved",        value: resolved }
-                ];
+                this.username = this.usersMap[user.uid];
+                this.fetchTasks();
             } else {
                 this.$router.push('/login');
             }
@@ -164,8 +137,42 @@ export default {
         closeModal() {
             this.showModal = false;
             this.selectedTask = null;
-        }
+        },
 
+        async fetchTasks() {
+            const snapshot = await getDocs(collection(db, "tracker"));
+            const allTasks = [];
+            let total = 0;
+            let assigned = 0;
+            let open = 0;
+            let inProgress = 0;
+            let resolved = 0;
+
+            snapshot.forEach(doc => {
+                const task = doc.data();
+                task.id = doc.id;
+                total++;
+                if (task.assigned === this.userUID) assigned++;
+                if (task.status === "Open") open++;
+                if (task.status === "In progress") inProgress++;
+                if (task.status === "Resolved") resolved++;
+                task.author = this.usersMap[task.author] || "Undefined";
+                task.assigned = this.usersMap[task.assigned] || "Undefined";
+                console.log(task.created_at);
+                task.created_at = this.formatTimestamp(task.created_at);
+                allTasks.push(task);
+            });
+
+            this.records = allTasks;
+
+            this.stats = [
+                { type: "text",      label: "Total items",     value: total },
+                { type: "accent",    label: "Assigned",        value: assigned },
+                { type: "critical",  label: "Open",            value: open },
+                { type: "medium",    label: "In progress",     value: inProgress },
+                { type: "low",       label: "Resolved",        value: resolved }
+            ];
+        }
     }
 };
 </script>

@@ -1,6 +1,10 @@
 <template>
     <div class="drop-down width-100" ref="dropdownRef">
-        <div class="drop-down-control flex" @click="toggleMenu">
+        <div 
+            class="drop-down-control flex" 
+            @click="toggleMenu"
+            :class="disabled ? `disabled` : null"
+        >
             <p class="dropdown-label">{{ selected || "Select"}}</p>
             <img src="../assets/arrow_down.svg" alt="">
         </div>
@@ -57,6 +61,11 @@
         background-color: var(--separator);
     }
 
+    .disabled {
+        background-color: var(--separator);
+        cursor: not-allowed;
+    }
+
 </style>
 
 <script>
@@ -67,10 +76,15 @@
                 type: Array,
                 required: true
             },
-            value: {
+            modelValue: {
                 type: String,
                 required: false,
                 default: null
+            },
+            disabled: {
+                type: Boolean,
+                required: false,
+                default: false
             }
         },
         data() {
@@ -80,15 +94,26 @@
             };
         },
         created() {
-            this.selected = this.value;
+            this.selected = this.modelValue;
         },
+        watch: {
+            modelValue(newVal) {
+                this.selected = newVal;
+            }
+        },
+        emits: ['update:modelValue'],
         methods: {
             toggleMenu() {
+                if (this.disabled === true) {
+                    this.isOpen = false;
+                    return;
+                }
                 this.isOpen = !this.isOpen;
             },
             selectOption(option) {
-                this.value = option;
+                this.selected = option;
                 this.isOpen = false;
+                this.$emit('update:modelValue', option);
             },
             handleClickOutside(event) {
                 const dropdown = this.$refs.dropdownRef;

@@ -162,3 +162,8 @@ input {
     text-decoration: underline;
     color: var(--accent-hover);
 }
+
+input[readonly], textarea[readonly] {
+    background-color: var(--separator);
+    cursor: not-allowed;
+}

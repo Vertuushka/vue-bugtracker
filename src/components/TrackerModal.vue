@@ -14,8 +14,8 @@
                         id="title" 
                         required 
                         placeholder="Enter a descriptive title..." 
-                        :value="title"
-                        :readonly="readonly"
+                        v-model="title"
+                        :readonly="isReadonly"
                     >
                 </label>
                 <label for="description" class="flex-column gap-8 width-100">
@@ -24,37 +24,40 @@
                         name="description" 
                         id="description" 
                         placeholder="Describe the bug or task in detail..."
-                        :readonly="readonly"
-                    >{{ description }}</textarea>
+                        :readonly="isReadonly"
+                        v-model="description"
+                    ></textarea>
                 </label>
                 <div class="flex width-100 gap-16">
                     <label for="Status" class="flex-column gap-8 width-100">
                         Status
                         <DropDown
                             :options="statuses"
-                            :value="status"
+                            v-model="status"
+                            :disabled="isReadonly"
                         />
                     </label>
                     <label for="Priority" class="flex-column gap-8 width-100">
                         Priority
                         <DropDown 
                             :options="priorities"
-                            :value="priority"
+                            v-model="priority"
+                            :disabled="isReadonly"
                         />
                     </label>
                     <label for="assign" class="flex-column gap-8 width-100">
                         Assign to
                         <DropDown 
-                            :options="userOptions.map(u => u.name)"
-                            :value="assigned"
+                            :options="isReadonly ? [username] : userOptions.map(u => u.name)"
+                            v-model="assigned"
                         />
                     </label>
                 </div>
                 <div class="tracker-modal-controls flex-between width-100">
-                    <button class="btn-red flex" type="button"><span class="material-symbols-rounded icon">delete</span>Delete</button>
+                    <button :disabled="isReadonly" class="btn-red flex" type="button" @click="handleDelete"><span class="material-symbols-rounded icon">delete</span>Delete</button>
                     <div class="controls-right flex gap-8">
                         <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-                        <button class="btn-primary-small flex" type="submit"><span class="material-symbols-rounded icon">save</span>Save</button>
+                        <button class="btn-primary-small flex" type="button" @click="handleSave"><span class="material-symbols-rounded icon">save</span>Save</button>
                     </div>
                 </div>
             </form>
@@ -98,6 +101,7 @@
         height: 128px;
         border: 1px solid var(--separator);
         border-radius: 8px;
+        outline: none;
     }
     button {
         padding: 8px 12px;
@@ -108,6 +112,8 @@
 <script>
 import { priorities, statuses } from "../constants";
 import DropDown from "./DropDown.vue"
+import { db } from "../firebase";
+import { doc, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
     export default {
         name: "TrackerModal",
@@ -127,6 +133,10 @@ import DropDown from "./DropDown.vue"
             userUID: {
                 type: String,
                 required: true
+            },
+            username: {
+                type: String,
+                required: false
             }
         },
         computed: {
@@ -135,7 +145,20 @@ import DropDown from "./DropDown.vue"
                     uid,
                     name
                 }));
+            },
+            authorUID() {
+                const entry = Object.entries(this.users || {}).find(
+                    ([uid, name]) => name === this.selectedTask?.author
+                );
+                return entry ? entry[0] : null;
+            },
+            isReadonly() {
+                if (this.selectedTask?.id)
+                    return this.authorUID !== this.userUID;
+                else
+                    return false;
             }
+
         },
         data() {
             return {
@@ -145,21 +168,63 @@ import DropDown from "./DropDown.vue"
                 title: this.selectedTask?.title || '',
                 description: this.selectedTask?.description || '',
                 assigned: this.selectedTask?.assigned || null,
-                priority: this.selectedTask?.priority || null,
-                status: this.selectedTask?.status || null,
+                priority: this.selectedTask?.priority || 'Low',
+                status: this.selectedTask?.status || 'Open',
                 author: this.getUidByUsername(this.selectedTask?.author, this.users) || null,
-                user: this.userUID,
-                readonly: this.author !== this.user
             }
         },
         methods: {
-            getUidByUsername(username, usersMap) {
-                const entry = Object.entries(usersMap).find(
+            getUidByUsername(username) {
+                const entry = Object.entries(this.users).find(
                     ([uid, name]) => name === username
                 );
                 return entry ? entry[0] : null;
-            }
+            },
+            async handleSave() {
+                const isNew = this.selectedTask?.id;
+                const taskData = {
+                    title: this.title,
+                    description: this.description,
+                    assigned: this.getUidByUsername(this.assigned),
+                    priority: this.priority,
+                    status: this.status,
+                    author: this.userUID,
+                };
+                if (!isNew) {
+                    taskData["created_at"] = new Date();
+                }
+                console.log(taskData);
+                console.log(this.selectedTask?.id)
 
+                try {
+                    if (this.selectedTask?.id) {
+                        const taskRef = doc(db, "tracker", this.selectedTask.id);
+                        await updateDoc(taskRef, taskData);
+                    } else {
+                        const newTaskRef = doc(db, "tracker", crypto.randomUUID());
+                        await setDoc(newTaskRef, {
+                            ...taskData,
+                            id: newTaskRef.id
+                        });
+                    }
+                    this.$emit('refresh');
+                    this.$emit('close');
+                } catch (e) {
+                    console.error("Error:", e);
+                }
+            },
+            async handleDelete() {
+                if (!this.selectedTask?.id) return;
+
+                try {
+                    const taskRef = doc(db, "tracker", this.selectedTask.id);
+                    await deleteDoc(taskRef);
+                    this.$emit('refresh');
+                    this.$emit('close');
+                } catch (e) {
+                    console.error("Error:", e);
+                }
+            }
         }
     }
 </script>
