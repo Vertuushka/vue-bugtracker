@@ -54,10 +54,10 @@
                     </label>
                 </div>
                 <div class="tracker-modal-controls flex-between width-100">
-                    <button :disabled="isReadonly" class="btn-red flex" type="button" @click="handleDelete"><span class="material-symbols-rounded icon">delete</span>Delete</button>
+                    <button :disabled="isReadonly" class="btn-red flex modal_button" type="button" @click="handleDelete"><span class="material-symbols-rounded icon">delete</span>Delete</button>
                     <div class="controls-right flex gap-8">
-                        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-                        <button class="btn-primary-small flex" type="button" @click="handleSave"><span class="material-symbols-rounded icon">save</span>Save</button>
+                        <button class="btn-secondary modal_button" @click="$emit('close')">Cancel</button>
+                        <button class="btn-primary-small flex modal_button" type="button" @click="handleSave"><span class="material-symbols-rounded icon">save</span>Save</button>
                     </div>
                 </div>
             </form>
@@ -103,7 +103,7 @@
         border-radius: 8px;
         outline: none;
     }
-    button {
+    .modal_button {
         padding: 8px 12px;
     }
 </style>

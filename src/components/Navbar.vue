@@ -12,7 +12,7 @@
             </div>
             <div class="controls flex">
                 <button class="btn-secondary">
-                    <img src="../assets/dark_mode.svg" alt="">
+                    <span class="material-symbols-rounded icon">dark_mode</span>
                 </button>
                 <button 
                     v-if="currentUser" 

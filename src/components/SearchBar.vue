@@ -2,7 +2,14 @@
     <div class="search-bar-container">
         <label for="searchbar-input" class="searchbar-input-label flex">
             <span class="material-symbols-rounded description">search</span>
-            <input type="text" name="searchbar" id="searchbar-input" placeholder="Search bugs and tasks...">
+            <input 
+                type="text" 
+                name="searchbar" 
+                id="searchbar-input" 
+                placeholder="Search bugs and tasks..."
+                :value="modelValue"
+                @input="$emit('update:modelValue', $event.target.value)"
+            >
         </label>
     </div>
 </template>
@@ -37,6 +44,14 @@
 
 <script>
     export default {
-        name: "SearchBar"
+        name: "SearchBar",
+        props: {
+            modelValue: {
+                type: String,
+                required: false,
+                default: ""
+            }
+        },
+        emits: ['update:modelValue']
     }
 </script>

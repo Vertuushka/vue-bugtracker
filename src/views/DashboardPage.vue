@@ -5,10 +5,18 @@
         />
 		<main>
             <div class="search-panel width-100 flex gap-24">
-                <SearchBar />
+                <SearchBar
+                    v-model="searchQuery"
+                />
                 <div class="filters width-100 flex gap-24">
-                    <DropDown :options="priorities" @select="selectedPriority = $event"/>
-                    <DropDown :options="statuses"/>
+                    <DropDown 
+                        :options="priorities"
+                        v-model="selectedPriority"
+                    />
+                    <DropDown 
+                        :options="statuses"
+                        v-model="selectedStatus"
+                    />
                 </div>
             </div>
             <div class="dashboard flex gap-16">
@@ -21,7 +29,7 @@
             </div>
             <div class="task-cards flex-column gap-16">
                 <TrackerCard
-                    v-for="record in records"
+                    v-for="record in filteredRecords"
                     :data="record"
                     @click="openModal(record)"
                  />
@@ -70,7 +78,7 @@ import TrackerModal from "../components/TrackerModal.vue";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { statuses, priorities } from "../constants";
+import { statuses, priorities, statuses_filter, priorities_filter } from "../constants";
 
 export default {
 	name: "Dashboard",
@@ -84,16 +92,17 @@ export default {
 	},
     data() {
         return {
-            priorities: priorities,
-            statuses: statuses,
+            priorities: priorities_filter,
+            statuses: statuses_filter,
             stats: [],
             records: [],
             usersMap: {},
-            selectedPriority: null,
-            selectedStatus: null,
+            selectedPriority: "All",
+            selectedStatus: "All",
             selectedTask: null,
             showModal: false,
             userUID: null,
+            searchQuery: "",
         }
     },
     async mounted() {
@@ -172,6 +181,29 @@ export default {
                 { type: "medium",    label: "In progress",     value: inProgress },
                 { type: "low",       label: "Resolved",        value: resolved }
             ];
+        }
+    },
+    computed: {
+        filteredRecords() {
+            return this.records.filter(task => {
+                const matchesPriority = this.selectedPriority
+                    ? task.priority === this.selectedPriority || this.selectedPriority === "All"
+                    : true;
+
+                const matchesStatus = this.selectedStatus
+                    ? task.status === this.selectedStatus || this.selectedStatus === "All"
+                    : true;
+
+                const matchesSearch = this.searchQuery
+                    ? (
+                        task.title?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        task.description?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        task.assigned?.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    )
+                    : true;
+
+                return matchesPriority && matchesStatus && matchesSearch;
+            });
         }
     }
 };
