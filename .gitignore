@@ -26,3 +26,8 @@ dist-ssr
 package-lock.json
 
 firebase.js
+.firebase/hosting.ZGlzdA.cache
+.firebaserc
+.github/workflows/firebase-hosting-merge.yml
+.github/workflows/firebase-hosting-pull-request.yml
+firebase.json

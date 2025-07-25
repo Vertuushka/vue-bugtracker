@@ -57,6 +57,7 @@
                 try {
                     const userCredentials = await signInWithEmailAndPassword(auth, this.email, this.password);
                     this.errorMessage = "";
+                    this.$router.push("/");
                 } catch (error) {
                     this.errorMessage = error.message;
                 }
