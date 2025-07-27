@@ -39,6 +39,14 @@
 
     .tracker-card {
         padding: 32px;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    .tracker-card:hover {
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        box-shadow: 0px 32px 64px -48px rgba(0,0,0,0.2);
     }
 
     .tracker-card-header-text {
