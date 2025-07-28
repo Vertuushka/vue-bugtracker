@@ -54,6 +54,7 @@
 
     .drop-down-item {
         padding: 8px 12px;
+        border-radius: 8px;
         cursor: pointer;
     }
 
